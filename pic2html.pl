@@ -11,6 +11,7 @@ my %opt;
 Getopt::Long::Configure('bundling');
 GetOptions(
            "i|input:s" => \$opt{i},
+           "n|no-whitespace" => \$opt{n},
            "o|output:s" => \$opt{o},
           );
 
@@ -31,6 +32,14 @@ if (!$opt{o}){
   open($ofh, '>', $opt{o}) || die "Unable to open output file: $!\n";
 }
 
+my $t='\t';
+my $n='\n';
+
+if ($opt{n}){
+  $t='';
+  $n='';
+}
+
 print $ofh "<html><head></head><body></body><table><style type=\"text/css\">
 <!--
 table { border-spacing:0px; }
@@ -40,15 +49,15 @@ td { width:1px; }
 my ($x,$y)=$im->getBounds();
 
 for (my $ty=0;$ty<$y;$ty++){
-  print $ofh "<tr>\n";
+  print $ofh "<tr>".$n;
   for (my $tx=0;$tx<$x;$tx++){
     my ($r, $g, $b);
     my $index=$im->getPixel($tx,$ty);
     ($r,$g,$b)=$im->rgb($index);
-    print $ofh "\t<td bgcolor=\"#";
+    print $ofh $t."<td bgcolor=\"#";
     printf $ofh "%02x"x3,$r,$g,$b;
-    print $ofh "\"></td>\n";
+    print $ofh "\"></td>".$n;
   }
-  print $ofh "</tr>\n";
+  print $ofh "</tr>".$n;
 }
 print $ofh "</table></body></html>";
